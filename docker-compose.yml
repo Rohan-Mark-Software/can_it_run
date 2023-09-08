@@ -4,18 +4,31 @@ services:
     build: ./canitrun
     ports:
       - '3000:3000'
-  backend:
-    build: ./server
-    ports:
-      - '3001:3001'
   mysql:
-    image: mysql:8.0
+    image: mysql
     container_name: mysql
     ports:
       - '3306:3306'
     environment:
       MYSQL_ROOT_PASSWORD: '1234'
+      MYSQL_DATABASE: 'BENCHMARKS'
+      MYSQL_USER: 'dydgh2011'
+      MYSQL_PASSWORD: '14135647'
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+  backend:
+    build: ./server
+    ports:
+      - '3001:3001'
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+
+
 
