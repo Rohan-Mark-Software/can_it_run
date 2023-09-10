@@ -5,11 +5,13 @@ services:
     ports:
       - '3000:3000'
   mysql:
-    image: mysql
+    image: mysql:8.0
     container_name: mysql
     ports:
       - '3306:3306'
     environment:
+      MYSQL_ROOT_HOST : '%'
+      MYSQL_AUTH_PLUGIN : 'mysql_native_password'
       MYSQL_ROOT_PASSWORD: '1234'
       MYSQL_DATABASE: 'BENCHMARKS'
       MYSQL_USER: 'dydgh2011'

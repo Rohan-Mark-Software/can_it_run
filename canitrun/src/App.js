@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import * as feartures from './features.mjs';
 
 function App() {
   const [cpu, setCpu] = useState('enter your cpu here');
