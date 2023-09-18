@@ -5,7 +5,7 @@ import mysql from 'mysql2/promise';  // Notice the /promise
 export async function db_update(target) {  // Made it async
     try {
         const db = await mysql.createConnection({
-            host: 'mysql',
+            host: 'localhost',
             user: 'dydgh2011',
             password: '14135647',
             database: 'BENCHMARKS'
@@ -14,35 +14,35 @@ export async function db_update(target) {  // Made it async
         console.log('Connected to the database to update');
 
         const [tables] = await db.query('SHOW TABLES LIKE ?', [target]);
-        if (tables.length === 0) {
-            const createTableSQL = `
-            CREATE TABLE \`${target}\` (
-            \`Brand\` VARCHAR(255),
-            \`Model\` VARCHAR(255),
-            \`Rank\` INT,
-            PRIMARY KEY (\`Brand\`, \`Model\`)
-            )
-            `;            
-            await db.query(createTableSQL);
-            console.log('Table created');
-        } else {
+        if (tables.length !== 0) {
+            console.log('Table already exists.');
             const dropTableSQL = `DROP TABLE ${target}`;
             await db.query(dropTableSQL);
-            console.log('Table already exists.');
+            console.log('Table droped.');
         }
+        const createTableSQL = `
+        CREATE TABLE \`${target}\` (
+          \`Model\` VARCHAR(255) PRIMARY KEY,
+          \`Rank\` INT
+        )
+        `;        
+        await db.query(createTableSQL);
+        console.log('Table created');
 
         const uniqueRows = new Set();
 
         const readStream = fs.createReadStream(target + '_UserBenchmarks.csv').pipe(csv());
 
         for await (const row of readStream) {
-            const uniqueIdentifier = `${row.Brand}-${row.Model}`;
-            if (!uniqueRows.has(uniqueIdentifier)) {
-                const query = `INSERT INTO ${target} (\`Brand\`, \`Model\`, \`Rank\`) VALUES (?, ?, ?)`;
-                await db.query(query, [row.Brand, row.Model, row.Rank]); // Added values here
-                uniqueRows.add(uniqueIdentifier);
-            }
+        const uniqueIdentifier = `${row.Brand} ${row.Model}`;  // Concatenating brand and model
+        if (!uniqueRows.has(uniqueIdentifier)) {
+            const query = `INSERT INTO ${target} (\`Model\`, \`Rank\`) VALUES (?, ?)`;  // Changed query
+            await db.query(query, [uniqueIdentifier, row.Rank]);  // Inserting concatenated brand and model
+            uniqueRows.add(uniqueIdentifier);
         }
+        }
+
+
         
 
         console.log('CSV file successfully processed');

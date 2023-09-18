@@ -1,49 +1,65 @@
 import React, { useEffect, useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+  Link
+} from "react-router-dom";
+
+import FrontPage from './front_page';
+import Result from './result_page';
 import * as feartures from './features.mjs';
+import "./App.css";
 
 function App() {
-  const [cpu, setCpu] = useState('enter your cpu here');
-  const [gpu, setGpu] = useState('enter your gpu here');
-  const [ram, setRam] = useState('enter your ram here');
+  const [inputs, setinputs] = useState({
+    game_name: '',
+    user_cpu: '',
+    user_gpu: '',
+    user_ram: ''
+  });
 
+  const {game_name, user_cpu, user_gpu, user_ram} = inputs
+  const onChange = e => {
+    const {name, value} = e.target;
 
-  let id = "inputs";
+    if (name === 'user_ram' && isNaN(value)) {
+      return;
+    }
+    
+    setinputs({
+      ...inputs,
+      [name]: value
+    });
+
+  };
+
   return (
-      <div className={"App"}>
-        <div id={id}>
-          <form>
-            <label htmlFor='user_cpu'>User CPU</label><br/>
-            <input
-                type='text'
-                id='user_cpu'
-                name='user_cpu'
-                value={cpu}
-                onChange={(e) => setCpu(e.target.value)}
+    <Router>
+      <h1>Testing Page</h1>
+        <Switch>
+          <Route path="/frontpage">
+            <FrontPage
+              game_name={game_name}
+              user_cpu={user_cpu}
+              user_gpu={user_gpu}
+              user_ram={user_ram}
+              onChange={onChange}
             />
-            <br/>
-            <label htmlFor='user_gpu'>User GPU</label><br/>
-            <input
-                type='text'
-                id='user_gpu'
-                name='user_gpu'
-                value={gpu}
-                onChange={(e) => setGpu(e.target.value)}
+          </Route>
+          <Route path="/result">
+            <Result
+              game_name={game_name}
+              user_cpu={user_cpu}
+              user_gpu={user_gpu}
+              user_ram={user_ram}
             />
-            <br/>
-            <label htmlFor='user_ram'>User RAM</label><br/>
-            <input
-                type='text'
-                id='user_ram'
-                name='user_ram'
-                value={ram}
-                onChange={(e) => setRam(e.target.value)}
-            />
-            <br/>
-            <input type='submit' value='Submit' />
-          </form>
-        </div>
-      </div>
-  );
+          </Route>
+          <Redirect to="/frontpage" />
+        </Switch>
+    </Router>
+  ) ;
 }
 
 export default App;

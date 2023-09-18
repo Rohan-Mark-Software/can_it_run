@@ -30,6 +30,9 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    volumes:
+      - .:/Users/nam-yongho/Desktop/Projects/Web Developing Projects/Can It Run/can_it_run/server
+
 
 
 
