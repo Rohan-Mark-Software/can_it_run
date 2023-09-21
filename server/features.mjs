@@ -1,9 +1,11 @@
+import { json } from "express";
+
 // import * as server_side_functions from ""
 const User = {
     CPU: "",
     GPU: "",
     RAM: "",
-    OS: ""
+    OS: 4
 }
 
 const Game = {
@@ -45,12 +47,20 @@ function get_os_id(os){
 }
 
 function json_filter(target, data){
-    // find target keyword from json tree and set first child's data
     switch (target) {
         case 'options':
-            // let listOfData = [1,3];
-
-            //return listOfData;
+            const result = [];
+            if('results' in data){
+                for(let i = 0;i<data['results'].length; ++i){
+                    if('id' in data['results'][i] && 'name' in data['results'][i]){
+                        const j = {'id': data['results'][i]['id'],
+                        'Model': data['results'][i]['name']}
+                        result.push(j)
+                    }
+                }
+            }
+            console.log('results are', result);
+            return result;
         case 'id':
             Game.id = data.id;
             return;
@@ -100,12 +110,10 @@ function analyze_requirements(MorR, requirements){
     }
 }
 
-
 function combine_url(api_url, params){
-
     let result = api_url + '?';
     for(let i in params){
-        result += i + '=' + result[i] + '&';
+        result += i + '=' + params[i] + '&';
     }
     result.substring(0, result.length - 1)
     return result;
@@ -130,41 +138,34 @@ function show_error(error){
 }
 
 function send_request(request){
-    let result;
-    let error;
-
-    fetch(request)
-        .then(response => response.json())
-        .then(data => {
-            result = data;
-        })
-        .catch(err => {
-            error = err;
-        });
-
-    return {result, error};
+    return new Promise((resolve, reject) => {
+        fetch(request)
+            .then(response => response.json())
+            .then(data => {
+                resolve({result: data, error: null});
+            })
+            .catch(err => {
+                reject({result: null, error: err});
+            });
+    });
 }
 
-function show_options(datas){
-
-}
-
-export function get_game_by_name(name){
-    // http request here
+export async function get_game_by_name(name){
     let api_url = "https://api.rawg.io/api/games";
     let params = {
         'key': 'f51c080731c746f09f0a18e6f78f5360',
         'page_size': 3,
         'search': name,
-        'ordering': '-metacritic',
-        'platform': User.OS
+        'platform': '4'
     };
-    let data = send_request(combine_url(api_url, params));
-
-    if(Object.keys(data[0]).length === 0){
-        show_options(json_filter("options", data[0]))
-    }else{
-        show_error(data[1]);
+    
+    try {
+        const data = await send_request(combine_url(api_url, params));
+        //console.log(data.result);
+        return json_filter('options', data.result)
+    } catch(error) {
+        console.log(error.error); 
+        return [{Model: 'ERROR'}];
     }
 }
 
@@ -184,5 +185,4 @@ export function get_game_info(){
     }else{
         show_error(data[1]);
     }}
-
 

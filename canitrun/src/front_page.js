@@ -1,51 +1,89 @@
 import React, { useEffect, useState } from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link
-  } from "react-router-dom";
 import { useHistory } from 'react-router-dom';
+import loadingAnimation from './loading.svg';
+function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, setGameId}) {
 
-  
-function FrontPage({user_cpu, user_gpu, user_ram, game_name, onChange}) {
     const history = useHistory();
 
-    const handleSubmit = (e) => {
-        
-        e.preventDefault();
-        history.push("/result");
-    };
-    
+    const [isGameValid, setIsGameValid] = useState(false);
+    const [isCpuValid, setIsCpuValid] = useState(false);
+    const [isGpuValid, setIsGpuValid] = useState(false);
+
+    const [isLoadingGame, setIsLoadingGame] = useState(false);
+    const [finishedTyping, setFinishedTyping] = useState(false);
+
+    const [gameSuggestions, setGameSuggestions] = useState([]);
     const [cpuSuggestions, setCpuSuggestions] = useState([]);
     const [gpuSuggestions, setGpuSuggestions] = useState([]);
 
+    const [gameFocused, setGameFocused] = useState(false);
     const [cpuFocused, setCpuFocused] = useState(false);
     const [gpuFocused, setGpuFocused] = useState(false);
 
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      if (!game_id){
+        alert("Game ID is not set. Cannot proceed.");
+      }else if(!isCpuValid){
+        alert("CPU is not set. Cannot proceed.");
+      }else if(!isGpuValid){
+        alert("GPU ID is not set. Cannot proceed.");
+      }else if(!isGameValid){
+        alert("Game Name is not set. Cannot proceed.");
+      }else if(!user_ram){
+        alert("RAM is not set. Cannot proceed.");
+      }
+      else{
+        history.push("/result");
+      }
+
+    };
 
     const fetchSuggestions = async (input, type) => {
-        try {
-            const response = await fetch(`http://localhost:3001/api/suggestions?input=${input}&type=${type}`);
+      try {
+        const response = await fetch(`http://localhost:3001/api/suggestions?input=${input}&type=${type}`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
             console.log(response);
-            if (response.ok) {
-                const data = await response.json();
-                if (type === 'CPU') {
-                setCpuSuggestions(data);
-                console.log(cpuSuggestions)
-                console.log('cpu updated');
-                } else if (type === 'GPU') {
-                setGpuSuggestions(data);
-                console.log(gpuSuggestions)
-                console.log('gpu updated');
-                }
-            } else {
-                console.error('Failed to fetch suggestions:', response.status);
+            if (type === 'CPU') {
+            setCpuSuggestions(data);
+            } else if (type === 'GPU') {
+            setGpuSuggestions(data);
+            } else if (type === 'Game') {
+            setGameSuggestions(data);
             }
-        } catch (error) {
-        console.error('Failed to fetch suggestions:', error);
+        } else {
+            console.error('inside if Failed to fetch suggestions:', response.status);
         }
+      } catch (error) {
+      console.error('Failed to fetch suggestions:', error);
+      } finally {
+        if (type === 'Game'){
+          setIsLoadingGame(false);  // Set loading state to false when done
+        }
+      }
     };
+
+    useEffect(() => {
+      if (!finishedTyping){
+        if (game_name) {
+          setGameSuggestions([])
+          setIsLoadingGame(true);  // Set loading state to true for game_name
+          const timer = setTimeout(() => {
+            fetchSuggestions(game_name.toUpperCase(), 'Game');
+          }, 1000); // 3 seconds
+          return () => {
+            clearTimeout(timer);
+          };
+        }else{
+          setGameSuggestions([])
+        }
+      }else{
+        setFinishedTyping(false);
+      }
+
+    }, [game_name]);
 
     useEffect(() => {
         if (user_cpu) fetchSuggestions(user_cpu, 'CPU');
@@ -55,34 +93,49 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, onChange}) {
         if (user_gpu) fetchSuggestions(user_gpu, 'GPU');
     }, [user_gpu]);
 
+    const onGameBlurDelay = () => {
+        setTimeout(() => {
+          setGameFocused(false);
+        }, 200); // 200 milliseconds delay
+      };
+
     const onCpuBlurDelay = () => {
         setTimeout(() => {
           setCpuFocused(false);
         }, 200); // 200 milliseconds delay
       };
-    
+     
     const onGpuBlurDelay = () => {
         setTimeout(() => {
             setGpuFocused(false);
         }, 200); // 200 milliseconds delay
     };
 
-    const [isCpuValid, setIsCpuValid] = useState(false);
-    const [isGpuValid, setIsGpuValid] = useState(false);
   
     // Function to check if input matches any of the suggestions
     const checkInputValidity = (input, suggestions, type) => {
-      const isValid = suggestions.some(
-        (suggestion) => suggestion.Model.toLowerCase() === input.toLowerCase()
+      const matchingSuggestion = suggestions.find(
+          (suggestion) => suggestion.Model.toLowerCase() === input.toLowerCase()
       );
-  
-      if (type === "CPU") {
-        setIsCpuValid(isValid);
-      } else if (type === "GPU") {
-        setIsGpuValid(isValid);
+      const isValid = Boolean(matchingSuggestion);
+      if (isValid && type === "Game") {
+        setGameId(matchingSuggestion.id); // Set the game_id here
       }
-    };
+      if (type === "CPU") {
+          setIsCpuValid(isValid);
+      } else if (type === "GPU") {
+          setIsGpuValid(isValid);
+      } else if (type === "Game") {
+          setIsGameValid(isValid);
+      }
+  };
   
+    useEffect(() => {
+        if (game_name && gameSuggestions.length > 0) {
+          checkInputValidity(game_name, gameSuggestions, "Game");
+        }
+      }, [game_name, gameSuggestions]);
+
     useEffect(() => {
       if (user_cpu && cpuSuggestions.length > 0) {
         checkInputValidity(user_cpu, cpuSuggestions, "CPU");
@@ -107,8 +160,33 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, onChange}) {
                 placeholder='Enter Name of the Game here'
                 value={game_name}
                 onChange= {onChange}
+                onFocus={() => setGameFocused(true)}
+                onBlur={onGameBlurDelay}
                 autoComplete="off"
             />
+            {isLoadingGame ? (
+            <div className="loading">
+                <img src={loadingAnimation} alt="Loading..." />
+            </div>
+            ) : null }
+            <div>
+            {gameFocused && gameSuggestions.length > 0 ? (
+                <div className="suggestions">
+                {gameSuggestions.map((suggestion, index) => (
+                    <div 
+                    className="suggestion-item"
+                    key={index} 
+                    onClick={() => {
+                        setFinishedTyping(true);
+                        onChange({ target: { name: 'game_name', value: suggestion.Model } });           
+                    }}
+                    >
+                    {suggestion.Model}
+                    </div>
+                ))}
+                </div>
+            ) : null}
+            </div>
             <br/>
             <label htmlFor='user_cpu'>User CPU</label><br/>
             <input
@@ -184,6 +262,9 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, onChange}) {
             <br/>
             <input type="submit" value="Submit" />
           </form>
+            <div>
+                {isGameValid ? "Game input is valid" : "Game input is not valid"}
+            </div>
             <div>
                 {isCpuValid ? "CPU input is valid" : "CPU input is not valid"}
             </div>

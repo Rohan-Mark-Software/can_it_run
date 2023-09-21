@@ -43,7 +43,7 @@ label {
 .suggestions {
   position: absolute;
   width: 80vw;
-  z-index: 0;
+  z-index: 1;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -71,3 +71,27 @@ label {
   position: relative;
 }
 
+.loading {
+  position: absolute;
+  width: 80vw;
+  z-index: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: black;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.loading img {
+  max-width: 10%; 
+  max-height: 10%; 
+  pointer-events: none;
+}
