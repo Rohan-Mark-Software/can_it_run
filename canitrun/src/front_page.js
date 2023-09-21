@@ -72,7 +72,7 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
           setIsLoadingGame(true);  // Set loading state to true for game_name
           const timer = setTimeout(() => {
             fetchSuggestions(game_name.toUpperCase(), 'Game');
-          }, 1000); // 3 seconds
+          }, 100); 
           return () => {
             clearTimeout(timer);
           };
