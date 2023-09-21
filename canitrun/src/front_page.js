@@ -24,11 +24,11 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
       e.preventDefault();
       if (!game_id){
         alert("Game ID is not set. Cannot proceed.");
-      }else if(!isCpuValid){
+      }else if(!isCpuValid || !user_cpu){
         alert("CPU is not set. Cannot proceed.");
-      }else if(!isGpuValid){
+      }else if(!isGpuValid || !user_gpu){
         alert("GPU ID is not set. Cannot proceed.");
-      }else if(!isGameValid){
+      }else if(!isGameValid || !game_name){
         alert("Game Name is not set. Cannot proceed.");
       }else if(!user_ram){
         alert("RAM is not set. Cannot proceed.");
