@@ -2,7 +2,6 @@ import * as helper from './server_helper.mjs';
 import express from 'express';
 import mysql from 'mysql2/promise';
 import cors from 'cors';
-import * as features from './features.mjs';
 const PORT = process.env.PORT || 3001;
 
 const db = await mysql.createConnection({
@@ -16,9 +15,10 @@ const app = express();
 app.use(cors()); 
 
 const init = async () => {
-  await helper.db_update("CPU");
-  await helper.db_update("GPU");
-
+  // await helper.benchmark_db_update("CPU");
+  // await helper.benchmark_db_update("GPU");
+  // await helper.setting_helper_functions();
+  // await helper.game_db_update();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
@@ -29,7 +29,6 @@ init().catch(err => {
 });
 
 app.get('/api/suggestions', async (req, res) => {
-  // fetch http://localhost:3001/api/suggestions?input=${input}&type=${type}
   const userInput = req.query.input;
   const type = req.query.type;
 
@@ -38,19 +37,39 @@ app.get('/api/suggestions', async (req, res) => {
   }
 
   console.log(type + ' type and model ' + userInput);
-
-  if (type === 'Game'){
-    const rows = await features.get_game_by_name(userInput);
-    // console.log("Sending response:", rows);
+  try {
+    const rows = await helper.search_target(userInput,type.toUpperCase());
+    console.log("Sending response:", rows);
     res.json(rows);
-  }else{
-    try {
-      const [rows] = await db.query(`SELECT Model FROM ${type} WHERE Model LIKE ? LIMIT 3`, [`%${userInput}%`]);
-      console.log("Sending response:", rows);
-      res.json(rows);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+app.get('/api/request_data', async (req, res) => {
+  const game = req.query.game;
+  try {
+    const rows = await helper.get_game(game);
+    console.log("Sending response:", rows);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get("/api/comparison", async (req, res) => {
+  const user_cpu = req.query.user_cpu;
+  const user_gpu = req.query.user_gpu;
+  const user_ram = req.query.user_ram;
+  const game_name = res.query.game_name;
+  try{
+    const game_info = await helper.search_target(game_name);
+
+  }catch(err){
+    console.error(err);
+    re
+  }
+  
 });

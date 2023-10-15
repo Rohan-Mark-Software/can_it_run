@@ -14,19 +14,12 @@ import "./App.css";
 function App() {
   const [inputs, setinputs] = useState({
     game_name: '',
-    game_id: '',
     user_cpu: '',
     user_gpu: '',
     user_ram: ''
   });
 
-  const {game_name, game_id, user_cpu, user_gpu, user_ram} = inputs;
-  const setGameId = (newGameId) => {
-    setinputs({
-        ...inputs,
-        game_id: newGameId
-    });
-  };
+  const {game_name, user_cpu, user_gpu, user_ram} = inputs;
   const onChange = e => {
     const {name, value} = e.target;
 
@@ -48,18 +41,15 @@ function App() {
           <Route path="/frontpage">
             <FrontPage
               game_name={game_name}
-              game_id={game_id}
               user_cpu={user_cpu}
               user_gpu={user_gpu}
               user_ram={user_ram}
-              onChange={onChange}
-              setGameId={setGameId}  
+              onChange={onChange} 
             />
           </Route>
           <Route path="/result">
             <Result
               game_name={game_name}
-              game_id={game_id}
               user_cpu={user_cpu}
               user_gpu={user_gpu}
               user_ram={user_ram}

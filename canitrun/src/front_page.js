@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import loadingAnimation from './loading.svg';
-function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, setGameId}) {
-
+function FrontPage({user_cpu, user_gpu, user_ram, game_name, onChange, setGameId}) {
     const history = useHistory();
 
     const [isGameValid, setIsGameValid] = useState(false);
@@ -10,7 +9,12 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
     const [isGpuValid, setIsGpuValid] = useState(false);
 
     const [isLoadingGame, setIsLoadingGame] = useState(false);
-    const [finishedTyping, setFinishedTyping] = useState(false);
+    const [isLoadingCPU, setIsLoadingCPU] = useState(false);
+    const [isLoadingGPU, setIsLoadingGPU] = useState(false);
+
+    const [finishedTypingGame, setFinishedTypingGame] = useState(false);
+    const [finishedTypingCPU, setFinishedTypingCPU] = useState(false);
+    const [finishedTypingGPU, setFinishedTypingGPU] = useState(false);
 
     const [gameSuggestions, setGameSuggestions] = useState([]);
     const [cpuSuggestions, setCpuSuggestions] = useState([]);
@@ -22,9 +26,7 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
 
     const handleSubmit = (e) => {
       e.preventDefault();
-      if (!game_id){
-        alert("Game ID is not set. Cannot proceed.");
-      }else if(!isCpuValid || !user_cpu){
+      if(!isCpuValid || !user_cpu){
         alert("CPU is not set. Cannot proceed.");
       }else if(!isGpuValid || !user_gpu){
         alert("GPU ID is not set. Cannot proceed.");
@@ -34,7 +36,13 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
         alert("RAM is not set. Cannot proceed.");
       }
       else{
-        history.push("/result");
+        
+        history.push("/result", { 
+          game_name: game_name,
+          user_cpu: user_cpu,
+          user_gpu: user_gpu,
+          user_ram: user_ram,
+        });
       }
 
     };
@@ -62,17 +70,23 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
         if (type === 'Game'){
           setIsLoadingGame(false);  // Set loading state to false when done
         }
+        if (type === 'CPU'){
+          setIsLoadingCPU(false);  // Set loading state to false when done
+        }
+        if (type === 'GPU'){
+          setIsLoadingGPU(false);  // Set loading state to false when done
+        }
       }
     };
 
     useEffect(() => {
-      if (!finishedTyping){
+      if (!finishedTypingGame){
         if (game_name) {
           setGameSuggestions([])
           setIsLoadingGame(true);  // Set loading state to true for game_name
           const timer = setTimeout(() => {
             fetchSuggestions(game_name.toUpperCase(), 'Game');
-          }, 100); 
+          }, 600); 
           return () => {
             clearTimeout(timer);
           };
@@ -80,17 +94,46 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
           setGameSuggestions([])
         }
       }else{
-        setFinishedTyping(false);
+        setFinishedTypingGame(false);
       }
-
     }, [game_name]);
 
     useEffect(() => {
-        if (user_cpu) fetchSuggestions(user_cpu, 'CPU');
+      if (!finishedTypingCPU){
+        if (user_cpu) {
+          setCpuSuggestions([])
+          setIsLoadingCPU(true);  // Set loading state to true for game_name
+          const timer = setTimeout(() => {
+            fetchSuggestions(user_cpu, 'CPU');
+          }, 600); 
+          return () => {
+            clearTimeout(timer);
+          };
+        }else{
+          setCpuSuggestions([])
+        }
+      }else{
+        setFinishedTypingCPU(false);
+      }
     }, [user_cpu]);
 
     useEffect(() => {
-        if (user_gpu) fetchSuggestions(user_gpu, 'GPU');
+      if (!finishedTypingGPU){
+        if (user_cpu) {
+          setGpuSuggestions([])
+          setIsLoadingGPU(true);  // Set loading state to true for game_name
+          const timer = setTimeout(() => {
+            fetchSuggestions(user_gpu, 'GPU');
+          }, 600); 
+          return () => {
+            clearTimeout(timer);
+          };
+        }else{
+          setGpuSuggestions([])
+        }
+      }else{
+        setFinishedTypingGPU(false);
+      }
     }, [user_gpu]);
 
     const onGameBlurDelay = () => {
@@ -111,16 +154,12 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
         }, 200); // 200 milliseconds delay
     };
 
-  
     // Function to check if input matches any of the suggestions
     const checkInputValidity = (input, suggestions, type) => {
       const matchingSuggestion = suggestions.find(
           (suggestion) => suggestion.Model.toLowerCase() === input.toLowerCase()
       );
       const isValid = Boolean(matchingSuggestion);
-      if (isValid && type === "Game") {
-        setGameId(matchingSuggestion.id); // Set the game_id here
-      }
       if (type === "CPU") {
           setIsCpuValid(isValid);
       } else if (type === "GPU") {
@@ -177,7 +216,7 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
                     className="suggestion-item"
                     key={index} 
                     onClick={() => {
-                        setFinishedTyping(true);
+                        setFinishedTypingGame(true);
                         onChange({ target: { name: 'game_name', value: suggestion.Model } });           
                     }}
                     >
@@ -200,6 +239,11 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
             onBlur={onCpuBlurDelay}
             autoComplete="off"
             />
+            {isLoadingCPU ? (
+            <div className="loading">
+                <img src={loadingAnimation} alt="Loading..." />
+            </div>
+            ) : null }
             <div>
             {cpuFocused && cpuSuggestions.length > 0 ? (
                 <div className="suggestions">
@@ -231,6 +275,11 @@ function FrontPage({user_cpu, user_gpu, user_ram, game_name, game_id, onChange, 
                 onBlur={onGpuBlurDelay}
                 autoComplete="off"
             />
+            {isLoadingGPU ? (
+            <div className="loading">
+                <img src={loadingAnimation} alt="Loading..." />
+            </div>
+            ) : null }
             <div>
             {gpuFocused && gpuSuggestions.length > 0 ? (
                 <div className="suggestions">
