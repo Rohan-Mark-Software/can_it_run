@@ -1,0 +1,39 @@
+version: '3'
+services:
+  frontend:
+    build: ./canitrun
+    ports:
+      - '3000:3000'
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_HOST : '%'
+      MYSQL_AUTH_PLUGIN : 'mysql_native_password'
+      MYSQL_ROOT_PASSWORD: '1234'
+      MYSQL_DATABASE: 'BENCHMARKS'
+      MYSQL_USER: 'dydgh2011'
+      MYSQL_PASSWORD: '14135647'
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+  backend:
+    build: ./server
+    ports:
+      - '3001:3001'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - .:/Users/nam-yongho/Desktop/Projects/Web Developing Projects/Can It Run/can_it_run/server
+
+
+
+
+
