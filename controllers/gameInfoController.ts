@@ -2,7 +2,7 @@ import GameInfoModel from '../models/infoModel';
 import { GameInfo } from '../models/customDataTypes';
 import { Request, Response } from 'express';
 
-
+// ignore this file, it's dummy file
 class GameController {
     private gameInfoModel: GameInfoModel;
 
