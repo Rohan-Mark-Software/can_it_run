@@ -4,10 +4,9 @@ import { parse } from 'csv-parse';
 import { join } from 'path';
 import OpenAI from "openai";
 
-
 // enter the API key here.
 // DON'T FORGET TO REMOVE THIS BEFORE UPLOADING ON GITHUB
-const APIKey: string = "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";
+const APIKey: string = "";
 const openai = new OpenAI({ apiKey: APIKey });
 
 class InfoModel {
@@ -279,4 +278,4 @@ class InfoModel {
     }
 }
 
-export default InfoModel;
+export default InfoModel
