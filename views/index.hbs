@@ -1,19 +1,63 @@
-<h1>Can It Run?</h1>
-
-{{!-- convert previouse code into this --}}
-<form action="/check" method="post">
-  <label for="gameName">Enter Game Name:</label>
-  <input type="text" id="gameName" name="gameName" required>
-  <button type="submit">Check Compatibility</button>
-</form>
-
-
-<form action="/submit-specs" method="post">
-  <label for="specs">Enter Computer Specs:</label>
-  <textarea id="specs" name="specs" rows="4" required></textarea>
-  <button type="submit">Submit Specs</button>
-</form>
-
-
-<img src="/images/logo.jpeg" alt="">
-
+<div id="inputs">
+    <form action="/compare" method="post">
+        <label for="game_name">Game</label><br />
+        <input
+            type="text"
+            id="game_name"
+            name="game_name"
+            placeholder="Enter Name of the Game here"
+            value=""
+            autocomplete="off"
+            autofocus="on"
+            oninput="toggleLoading(game_name_loading)"
+        />
+        <div class="loading" id="game_name_loading" hidden>
+            <img src="/images/loading.svg" alt="Loading..." />
+        </div>
+        <br />
+        <label for="user_cpu">User CPU</label><br />
+        <input
+            type="text"
+            id="user_cpu"
+            name="user_cpu"
+            placeholder="Enter your CPU here"
+            value=""
+            onchange="onChange(event)"
+            onfocus="setCpuFocused(true)"
+            onblur="onCpuBlurDelay()"
+            autocomplete="off"
+        />
+        <div class="loading">
+            <img src="/images/loading.svg" alt="Loading..." />
+        </div>
+        <br />
+        <label for="user_gpu">User GPU</label><br />
+        <input
+            type="text"
+            id="user_gpu"
+            name="user_gpu"
+            placeholder="Enter your GPU here"
+            value=""
+            onchange="onChange(event)"
+            onfocus="setGpuFocused(true)"
+            onblur="onGpuBlurDelay()"
+            autocomplete="off"
+        />
+        <div class="loading">
+            <img src="/images/loading.svg" alt="Loading..." />
+        </div>
+        <br />
+        <label for="user_ram">User RAM</label><br />
+        <input
+            type="text"
+            id="user_ram"
+            name="user_ram"
+            placeholder="Enter your RAM here"
+            value=""
+            onchange="onChange(event)"
+            autocomplete="off"
+        />
+        <br />
+        <input type="submit" value="Submit" />
+    </form>
+</div>

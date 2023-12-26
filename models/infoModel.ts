@@ -6,7 +6,7 @@ import OpenAI from "openai";
 
 // enter the API key here.
 // DON'T FORGET TO REMOVE THIS BEFORE UPLOADING ON GITHUB
-const APIKey: string = "";
+const APIKey: string = "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";
 const openai = new OpenAI({ apiKey: APIKey });
 
 class InfoModel {
@@ -206,7 +206,7 @@ class InfoModel {
     async getInfo(table: string, targetColumn: string, target: string): Promise<string[][]>{
         try {
             const formattedTarget = target.toLowerCase();
-            const sql = `SELECT * FROM ${table} WHERE LOWER(${targetColumn}) LIKE ? LIMIT 5`;
+            const sql = `SELECT * FROM ${table} WHERE LOWER(${targetColumn}) LIKE ? LIMIT 3`;
     
             const result = await this.query(sql, [`%${formattedTarget}%`]) as RowDataPacket[];
             const formattedResult = result.map((row) => {

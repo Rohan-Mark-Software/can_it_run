@@ -1,5 +1,9 @@
-<h1>results</h1>
+<h1>Compatibility Result</h1>
 
-{{!-- figure out how to use form and use script --}}
-<h2>yes or no</h2>
+    {{#if result}}
+        <p>{{result}}</p>
+    {{else}}
+        <p>Error retrieving compatibility result.</p>
+    {{/if}}
 
+<a href="/">Go back</a>

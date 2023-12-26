@@ -37,14 +37,14 @@ class InfoController {
         }
     }
 
-    async compareInfos(req: Request, res: Response) {
+    async compareInfos(req: Request): Promise<string>{
         try{
             const { userSpec, gameInfo } = req.body;
             const result = await this.InfoModel.openAIAPICall(userSpec, gameInfo);
-            res.status(200).json({ success: true, data: result});
+            return result;
         }catch (error) {
             console.error('Error getting info:', error);
-            res.status(500).json({success: false, message: 'APIcall fail'});
+            return "";
         }
     }
 }
