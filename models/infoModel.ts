@@ -6,7 +6,7 @@ import OpenAI from "openai";
 
 // enter the API key here.
 // DON'T FORGET TO REMOVE THIS BEFORE UPLOADING ON GITHUB
-const APIKey: string = "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";
+const APIKey: string = "";
 const openai = new OpenAI({ apiKey: APIKey });
 
 class InfoModel {
