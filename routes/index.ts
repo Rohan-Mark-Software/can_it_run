@@ -21,12 +21,7 @@ router.post('/compare', async (req, res) => {
 
 router.get('/suggestions', async (req, res) => {
     try {
-        const tableName = 'GAME_INFO';
-        const targetColumn = 'game_name';
-        const target = req.query.input || '';
-
-         await infoController.getInfo(req, res);
-        
+        await infoController.getInfo(req, res);
     } catch (error) {
         console.error('Error getting game suggestions:', error);
     }

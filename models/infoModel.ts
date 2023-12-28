@@ -6,7 +6,7 @@ import OpenAI from "openai";
 
 // enter the API key here.
 // DON'T FORGET TO REMOVE THIS BEFORE UPLOADING ON GITHUB
-const APIKey: string = "";
+const APIKey: string = "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";
 const openai = new OpenAI({ apiKey: APIKey });
 
 class InfoModel {
@@ -94,6 +94,30 @@ class InfoModel {
         await this.addColumn("GAME_INFO", "LOWEST_POSSIBLE", "VARCHAR(255)");
         await this.addColumn("GAME_INFO", "HIGHEST_IMPOSSIBLE", "VARCHAR(255)");
 
+        await this.deleteColumn("CPU_INFO", "TYPE");
+        console.log("CPU_INFO Type deleted");
+        await this.deleteColumn("CPU_INFO", "PART_NUMBER");
+        console.log("CPU_INFO Part_Number deleted");
+
+        await this.deleteColumn("GPU_INFO", "TYPE");
+        console.log("GPU_INFO Type deleted");
+        await this.deleteColumn("GPU_INFO", "PART_NUMBER");
+        console.log("GPU_INFO Part_Number deleted");
+
+        await this.combineColumns("CPU_INFO", "BRAND", "MODEL", "cpu_name");
+        console.log("CPU_INFO Brand Model columnds combined as cpu_name");
+        await this.combineColumns("GPU_INFO", "BRAND", "MODEL", "gpu_name");
+        console.log("GPU_INFO Brand Model columnds combined as gpu_name");
+
+        await this.deleteColumn("CPU_INFO", "BRAND");
+        console.log("CPU_INFO BRAND deleted");
+        await this.deleteColumn("CPU_INFO", "MODEL");
+        console.log("CPU_INFO MODEL deleted");
+
+        await this.deleteColumn("GPU_INFO", "BRAND");
+        console.log("GPU_INFO BRAND deleted");
+        await this.deleteColumn("GPU_INFO", "MODEL");
+        console.log("GPU_INFO MODEL deleted");
     }
 
     // create methods
@@ -178,12 +202,11 @@ class InfoModel {
     async formatDatabase(): Promise<void> {
         try {
             const rows = await this.query(
-                'SELECT table_name FROM information_schema.tables WHERE table_schema = ?',
+                'SELECT * FROM information_schema.tables WHERE table_schema = ?',
                 ['MAIN_DB']
             ) as RowDataPacket[];
-            
             for (const row of rows) {
-                const tableName = row.table_name;
+                const tableName = row.TABLE_NAME;
                 await this.query(`DROP TABLE IF EXISTS ${tableName}`);
                 console.log(`Dropped table: ${tableName}`);
             }
@@ -203,16 +226,15 @@ class InfoModel {
     }
 
     // get methods
-    async getInfo(table: string, targetColumn: string, target: string): Promise<string[][]>{
+    async getInfo(table: string, targetColumn: string, target: string, column: string): Promise<string[][]>{
         try {
             const formattedTarget = target.toLowerCase();
-            const sql = `SELECT * FROM ${table} WHERE LOWER(${targetColumn}) LIKE ? LIMIT 3`;
+            const sql = `SELECT ${column} FROM ${table} WHERE LOWER(${targetColumn}) LIKE ? LIMIT 3`;
     
             const result = await this.query(sql, [`%${formattedTarget}%`]) as RowDataPacket[];
             const formattedResult = result.map((row) => {
                 return Object.values(row) as string[];
             });
-            console.log(formattedResult);
             return formattedResult;
         } catch (error) {
             console.error('Error retrieving information:', error);
@@ -221,6 +243,17 @@ class InfoModel {
     }
 
     // etc
+    async combineColumns(table: string, column_one: string, column_two: string, new_column: string): Promise<void>{
+        try {
+            await this.addColumn(table, new_column, "VARCHAR(255)");
+            const sql = `UPDATE ${table} SET ${new_column} = CONCAT(${column_one}, ' ', ${column_two});`
+            await this.query(sql);
+        } catch (error) {
+            console.error('Error deleting column:', error);
+            throw error;
+        }
+    }
+
     async checkIfColumnExists(table: string, column: string): Promise<boolean> {
         const sql = `SHOW COLUMNS FROM ${table} LIKE '${column}'`;
         const result = await this.query(sql) as RowDataPacket[];

@@ -1,62 +1,67 @@
 <div id="inputs">
     <form action="/compare" method="post">
-        <label for="game_name">Game</label><br />
+        <label for="game">Game</label><br />
         <input
             type="text"
-            id="game_name"
-            name="game_name"
+            id="game"
+            name="game"
             placeholder="Enter Name of the Game here"
             value=""
             autocomplete="off"
             autofocus="on"
-            oninput="toggleLoading(game_name_loading)"
+            oninput="getSuggestions('game', this.value)"
         />
-        <div class="loading" id="game_name_loading" hidden>
+        <div class="loading" id="game_loading" style="display:none">
             <img src="/images/loading.svg" alt="Loading..." />
         </div>
+        <div id="game_suggestions" class="suggestions" style="display:none">
+        </div>
+
         <br />
-        <label for="user_cpu">User CPU</label><br />
+        <label for="cpu">User CPU</label><br />
         <input
             type="text"
-            id="user_cpu"
-            name="user_cpu"
+            id="cpu"
+            name="cpu"
             placeholder="Enter your CPU here"
             value=""
-            onchange="onChange(event)"
-            onfocus="setCpuFocused(true)"
-            onblur="onCpuBlurDelay()"
             autocomplete="off"
+            oninput="getSuggestions('cpu', this.value)"
         />
-        <div class="loading">
+        <div class="loading" id="cpu_loading" style="display:none">
             <img src="/images/loading.svg" alt="Loading..." />
         </div>
-        <br />
-        <label for="user_gpu">User GPU</label><br />
+        <div id="cpu_suggestions" class="suggestions" style="display:none">
+        </div>
+        
+        <br/>
+        <label for="gpu">User GPU</label><br />
         <input
             type="text"
-            id="user_gpu"
-            name="user_gpu"
+            id="gpu"
+            name="gpu"
             placeholder="Enter your GPU here"
             value=""
-            onchange="onChange(event)"
-            onfocus="setGpuFocused(true)"
-            onblur="onGpuBlurDelay()"
             autocomplete="off"
+            oninput="getSuggestions('gpu', this.value)"
         />
-        <div class="loading">
+        <div class="loading" id="gpu_loading" style="display:none">
             <img src="/images/loading.svg" alt="Loading..." />
         </div>
+        <div id="gpu_suggestions" class="suggestions" style="display:none">
+        </div>
+        
         <br />
-        <label for="user_ram">User RAM</label><br />
+        <label for="ram">User RAM</label><br />
         <input
             type="text"
-            id="user_ram"
-            name="user_ram"
+            id="ram"
+            name="ram"
             placeholder="Enter your RAM here"
             value=""
-            onchange="onChange(event)"
             autocomplete="off"
         />
+        
         <br />
         <input type="submit" value="Submit" />
     </form>

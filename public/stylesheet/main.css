@@ -52,13 +52,14 @@ label {
 
 .suggestions {
   position: absolute;
-  width: 80vw;
+  width: 40vw;
   z-index: 1;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-height: 150px;
   overflow-y: auto;
+  display:block;
 }
 
 .suggestion-item {
