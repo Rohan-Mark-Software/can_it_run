@@ -6,7 +6,7 @@ import OpenAI from "openai";
 
 // enter the API key here.
 // DON'T FORGET TO REMOVE THIS BEFORE UPLOADING ON GITHUB
-const APIKey: string = "";
+const APIKey: string = "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";
 const openai = new OpenAI({ apiKey: APIKey });
 
 class InfoModel {
@@ -300,6 +300,10 @@ class InfoModel {
                 console.log(message);
                 console.log(`================================`);
                 console.log(completion.choices[0].message.content);
+                // do stuff
+                // check it it's failed or successed 
+                //check if the cpu or gpu model has been compared
+                // if its been compared, then add 
                 return completion.choices[0].message.content.toUpperCase() as string;
             }else{
                 return "error";

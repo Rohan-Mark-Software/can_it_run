@@ -1,17 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-    function handleInputFocus(type) {
-        setTimeout(() => {
-            const suggestionsContainer = document.getElementById(`${type}_suggestions`);
-            suggestionsContainer.style.display = "none";
-        }, 200);
-    }
-
-    document.getElementById('game').addEventListener('focusout', () => handleInputFocus('game'));
-    document.getElementById('cpu').addEventListener('focusout', () => handleInputFocus('cpu'));
-    document.getElementById('gpu').addEventListener('focusout', () => handleInputFocus('gpu'));
-
-});
-
 function getSuggestions(type, target) {
 
     const loading = document.getElementById(type + "_loading");
