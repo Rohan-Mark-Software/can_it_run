@@ -49,8 +49,6 @@ class InfoController {
                     i = game_data.indexOf(item);
                 }
             }
-            console.log(i);
-            console.log(game_data[i]);
             if(game_data[i][0] === ""|| game_data[i][1] === ""|| game_data[i][2] === ""|| game_data[i][2] === ""){
                 return "unknown";
             }
