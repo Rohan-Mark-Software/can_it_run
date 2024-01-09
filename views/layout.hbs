@@ -6,18 +6,26 @@
 
     <link rel="stylesheet" href="/stylesheet/main.css">
     <script src="/scripts/main.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" href="/images/logo.png">
     <title>Can It Run?</title>
+
 </head>
 <body>
-    {{!-- navigator --}}
-    <div id="page-container">
-        <h1>Testing Page</h1>
-        {{{body}}}
-    </div>
-    {{!-- footer --}}
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </nav>
+
+  <div class="container">
+    {{{body}}}
+  </div>
+
 </body>
 </html>
 

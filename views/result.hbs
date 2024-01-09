@@ -1,4 +1,4 @@
-<h1>Compatibility Result</h1>
+    {{game_info}}
 
     {{#if result}}
         <p>{{result}}</p>
@@ -6,4 +6,10 @@
         <p>Error retrieving compatibility result.</p>
     {{/if}}
 
-<a href="/">Go back</a>
+    {{#if user_info}}
+    <p>{{user_info}}</p>
+    {{/if}}
+<script>
+    // get game info and show user's info if there are
+    
+</script>

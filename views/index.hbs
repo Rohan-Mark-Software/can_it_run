@@ -1,29 +1,41 @@
-<div id="inputs">
-    <form action="/compare" method="post">
-        <label for="game">Game</label><br />
-        <input
-            type="text"
-            id="game"
-            name="game"
-            placeholder="Enter Name of the Game here"
-            value=""
-            autocomplete="off"
-            autofocus="on"
-            oninput="getSuggestions('game', this.value)"
-        />
-        <div class="loading" id="game_loading" style="display:none">
-            <img src="/images/loading.svg" alt="Loading..." />
-        </div>
-        <div id="game_suggestions" class="suggestions" style="display:none">
-        </div>
+<div class="background_character"></div>
+<div class="background_hill"></div>
+<form id="input_area" action="/compare" method="post" onsubmit="return validateForm()">
+    <div id="main_text">Can It Run</div>
+    <br>
+    <div id="main_text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+    <input type="text" 
+        id="game" 
+        placeholder="_____" 
+        value=""
+        name="game"
+        autocomplete="off"
+        autofocus="on"
+        oninput="getSuggestions('game', this.value)">
+    <div id="main_text">?</div>
 
-        <br />
-        <label for="cpu">User CPU</label><br />
+    <div class="loading" id="game_loading" style="display:none">
+        <img src="/images/loading.svg" alt="Loading..." />
+    </div>
+    <div id="game_suggestions" class="suggestions" style="display:none">
+    </div>
+    <br>
+     <input type="submit" value="RUN>" />
+
+    <div id="user_info_toggle_button" class="clickable" >
+        <svg onclick="toggle()" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 7.41421L6.41421 6L12.0711 11.6569L17.7279 6L19.1421 7.41421L12.0711 14.4853L5 7.41421Z" fill="currentColor"/>
+            <path d="M19 16.3432H5V18.3432H19V16.3432Z" fill="currentColor"/>
+        </svg>
+    </div>
+
+    <div id="user_info_input_area" style="display: none;">
+        <label for="cpu">CPU: </label>
         <input
             type="text"
             id="cpu"
             name="cpu"
-            placeholder="Enter your CPU here"
+            placeholder="___"
             value=""
             autocomplete="off"
             oninput="getSuggestions('cpu', this.value)"
@@ -33,14 +45,13 @@
         </div>
         <div id="cpu_suggestions" class="suggestions" style="display:none">
         </div>
-        
-        <br/>
-        <label for="gpu">User GPU</label><br />
+        <br>
+        <label for="gpu">GPU: </label>
         <input
             type="text"
             id="gpu"
             name="gpu"
-            placeholder="Enter your GPU here"
+            placeholder="___"
             value=""
             autocomplete="off"
             oninput="getSuggestions('gpu', this.value)"
@@ -50,23 +61,34 @@
         </div>
         <div id="gpu_suggestions" class="suggestions" style="display:none">
         </div>
+        <br>
         
-        <br />
-        <label for="ram">User RAM</label><br />
+        <label for="ram">RAM: </label>
         <input
-            type="text"
+            type="number"
             id="ram"
             name="ram"
-            placeholder="Enter your RAM here"
+            placeholder="___"
             value=""
             autocomplete="off"
         />
-        
-        <br />
-        <input type="submit" value="Submit" />
-    </form>
-</div>
+    </div>
+
+</form>
+
 <script>
+    var input = document.getElementById('game'); // get the input element
+    input.addEventListener('input', resizeInput); // bind the "resizeInput" callback on "input" event
+    resizeInput.call(input); // immediately call the function
+
+    function resizeInput() {
+        if (this.value === ""){
+            this.style.width = "364px";
+        }else{
+            this.style.width = 0; this.style.width = this.scrollWidth + 'px';
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
     function handleInputFocus(type) {
         setTimeout(() => {
@@ -79,5 +101,5 @@
     document.getElementById('cpu').addEventListener('focusout', () => handleInputFocus('cpu'));
     document.getElementById('gpu').addEventListener('focusout', () => handleInputFocus('gpu'));
 
-});
+    });
 </script>
