@@ -1,15 +1,63 @@
-    {{game_info}}
-
+<div class="result_container">
     {{#if result}}
-        <p>{{result}}</p>
-    {{else}}
-        <p>Error retrieving compatibility result.</p>
-    {{/if}}
+    <div class="result">{{result}}</div>
+    {{/if}}    
+    <div class="game_info">
+        <div class="game_name">{{game_name}}</div>
+        <div class="game_info_panels">
+            <div class="game_info_panel">
+                <div class="game_info_element_section">Minimum Requirements</div>
+                {{#if min_cpu}}
+                    <div class="game_info_element">CPU: {{min_cpu}}</div>
+                {{/if}}
+                {{#if min_gpu}}
+                    <div class="game_info_element">GPU: {{min_gpu}}</div>
+                {{/if}}
+                {{#if min_ram}}
+                    <div class="game_info_element">RAM: {{min_ram}}</div>
+                {{/if}}
+                {{#if min_dx}}
+                    <div class="game_info_element">DX: {{min_dx}}</div>
+                {{/if}}
+                {{#if min_os}}
+                    <div class="game_info_element">OS: {{min_os}}</div>
+                {{/if}}
+                {{#if min_sto}}
+                    <div class="game_info_element">STO: {{min_sto}}</div>
+                {{/if}}
+                {{#if min_net}}
+                    <div class="game_info_element">NET: {{min_net}}</div>
+                {{/if}}
+            </div>
+            <div class="game_info_panel">
+                <div class="game_info_element_section">Recomanded Requirements</div>
+                {{#if rec_cpu}}
+                    <div class="game_info_element">CPU: {{rec_cpu}}</div>
+                {{/if}}
+                {{#if rec_gpu}}
+                    <div class="game_info_element">GPU: {{rec_gpu}}</div>
+                {{/if}}
+                {{#if rec_ram}}
+                    <div class="game_info_element">RAM: {{rec_ram}}</div>
+                {{/if}}
+                {{#if rec_dx}}
+                    <div class="game_info_element">DX: {{rec_dx}}</div>
+                {{/if}}
+                {{#if rec_os}}
+                    <div class="game_info_element">OS: {{rec_os}}</div>
+                {{/if}}
+                {{#if rec_sto}}
+                    <div class="game_info_element">STO: {{rec_sto}}</div>
+                {{/if}}
+                {{#if rec_net}}
+                    <div class="game_info_element">NET: {{rec_net}}</div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
 
-    {{#if user_info}}
-    <p>{{user_info}}</p>
-    {{/if}}
-<script>
-    // get game info and show user's info if there are
-    
-</script>
+
+
+
+

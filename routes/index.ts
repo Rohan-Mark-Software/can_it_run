@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 async function callCompareInfosAsync(req: Request) {
     const promises = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 9; i++) {
         promises.push(infoController.compareInfos(req));
     }
     const results = await Promise.all(promises);
@@ -45,14 +45,70 @@ async function callCompareInfosAsync(req: Request) {
 
 router.post('/compare', async (req, res) => {
     const { game, cpu, gpu, ram} = req.body;
+    const game_data = await infoModel.getInfo("GAME_INFO", 'game_name', game, "*");
+    let i = 0;
+    for (const item of game_data) {
+        if (item[0] === game){
+            i = game_data.indexOf(item);
+        }
+    }
     if(cpu === "" || gpu === "" || ram === ""){
-        res.render('result', { result: "none"});
+        res.render('result', {
+            game_name: game_data[i][0],
+
+            min_cpu: game_data[i][1],
+            min_gpu: game_data[i][2],
+            min_ram: game_data[i][3],
+            min_dx: game_data[i][4],
+            min_os: game_data[i][5],
+            min_sto: game_data[i][6],
+            min_net: game_data[i][7],
+
+            rec_cpu: game_data[i][8],
+            rec_gpu: game_data[i][9],
+            rec_ram: game_data[i][10],
+            rec_dx: game_data[i][11],
+            rec_os: game_data[i][12],
+            rec_sto: game_data[i][13],
+            rec_net: game_data[i][14]
+        });
     }else{
         try {
             callCompareInfosAsync(req)
             .then((data) => {
-                // also gives the user information too
-                res.render('result', { result: data });
+                let compare_result = ""
+                if(data.toLowerCase() === "yes"){
+                    compare_result = "You Can Run This Game!";
+                }else if(data.toLowerCase() === "no"){
+                    compare_result = "You Can't Run This Game";
+                }else{
+                    compare_result = "Something Went Wrong...";
+                }
+                res.render('result', { 
+                    result: compare_result,
+
+                    game_name: game_data[i][0],
+
+                    min_cpu: game_data[i][1],
+                    min_gpu: game_data[i][2],
+                    min_ram: game_data[i][3],
+                    min_dx: game_data[i][4],
+                    min_os: game_data[i][5],
+                    min_sto: game_data[i][6],
+                    min_net: game_data[i][7],
+        
+                    rec_cpu: game_data[i][8],
+                    rec_gpu: game_data[i][9],
+                    rec_ram: game_data[i][10],
+                    rec_dx: game_data[i][11],
+                    rec_os: game_data[i][12],
+                    rec_sto: game_data[i][13],
+                    rec_net: game_data[i][14],
+                    
+                    user_cpu: cpu,
+                    user_gpu: gpu,
+                    user_ram: ram
+                });
             })
             .catch((error) => {
                 console.error(error);

@@ -6,7 +6,7 @@ import OpenAI from "openai";
 
 // enter the API key here.
 // DON'T FORGET TO REMOVE THIS BEFORE UPLOADING ON GITHUB
-const APIKey: string = "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";
+const APIKey: string = "";
 const openai = new OpenAI({ apiKey: APIKey });
 
 class InfoModel {
@@ -263,9 +263,6 @@ class InfoModel {
     async openAIAPICall(userSpec:string, gameInfo:string): Promise<string>{
         // change this
         try {
-            const a = `cpu = intel Core i9-13900KS, gpu = MSI RTX 4090 SUPRIM X 24G, ram = 16gb`;
-            const b = `name = A Game of Thrones: The Board Game - Digital Edition, min_cpu = Intel Pentium D or AMD Athlon 64 X2, min_gpu = Graphics card with DX11 or OpenGL 3.x capabilities, min_ram = 2 GB RAM `;
-
             const message = `
             My computer's specification is this:
             ${userSpec}
@@ -298,9 +295,6 @@ class InfoModel {
             });
 
             if (completion.choices[0].message.content){
-                // console.log(message);
-                // console.log(`================================`);
-                // console.log(completion.choices[0].message.content);
                 return completion.choices[0].message.content.toUpperCase() as string;
             }else{
                 return "error";
