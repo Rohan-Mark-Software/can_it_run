@@ -6,7 +6,7 @@ services:
     container_name: mysql
     restart: always
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./project_data/mysqldata:/var/lib/mysql
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -28,9 +28,4 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - app_data:/path/in/container
-
-volumes:
-  mysql_data:
-  app_data:
-    driver: efs
+      - .:/Users/nam-yongho/Desktop/CanItRun

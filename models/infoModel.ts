@@ -3,10 +3,12 @@ import fs from 'fs';
 import { parse } from 'csv-parse';
 import { join } from 'path';
 import OpenAI from "openai";
+import * as dotenv from "dotenv";
 
-// enter the API key here.
-// DON'T FORGET TO REMOVE THIS BEFORE UPLOADING ON GITHUB
-const APIKey: string = "";
+dotenv.config();
+
+const APIKey: string = process.env.API_KEY as string;
+
 const openai = new OpenAI({ apiKey: APIKey });
 
 class InfoModel {
@@ -14,9 +16,9 @@ class InfoModel {
 
     constructor(){
         this.pool = mysql.createPool({
-            host: 'localhost',
-            user: 'root',
-            password: 'password',
+            host: process.env.MYSQL_HOST,
+            user: process.env.MYSQL_USERNAME,
+            password: process.env.MYSQL_PASSWORD,
             database: 'MAIN_DB'
         });
     }
@@ -229,12 +231,19 @@ class InfoModel {
     async getInfo(table: string, targetColumn: string, target: string, column: string): Promise<string[][]>{
         try {
             const formattedTarget = target.toLowerCase();
-            const sql = `SELECT ${column} FROM ${table} WHERE LOWER(${targetColumn}) LIKE ? LIMIT 3`;
-    
+            const pre_sql = `SELECT ${column.toUpperCase()} FROM ${table.toUpperCase()} WHERE LOWER(${targetColumn.toUpperCase()}) = ? LIMIT 1`;
+            const sql = `SELECT ${column.toUpperCase()} FROM ${table.toUpperCase()} WHERE LOWER(${targetColumn.toUpperCase()}) LIKE ? LIMIT 2`;
+            
+            const pre_result = await this.query(pre_sql, [`${formattedTarget}`]) as RowDataPacket[];
             const result = await this.query(sql, [`%${formattedTarget}%`]) as RowDataPacket[];
-            const formattedResult = result.map((row) => {
+
+            const combinedResult = [...pre_result, ...result];
+            const uniqueResult = Array.from(new Set(combinedResult));
+
+            const formattedResult = uniqueResult.map((row) => {
                 return Object.values(row) as string[];
             });
+
             return formattedResult;
         } catch (error) {
             console.error('Error retrieving information:', error);

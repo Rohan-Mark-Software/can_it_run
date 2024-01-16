@@ -11,8 +11,6 @@ const app = express();
 const port = 3000;
 const router = express.Router();
 
-//infoModel.initializeDatabase();
-
 app.set('view engine', 'hbs');
 app.set('views', join(__dirname, 'views'));
 
